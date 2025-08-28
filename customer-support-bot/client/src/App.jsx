@@ -8,44 +8,70 @@ function App() {
   const sendMessage = async () => {
     if (!message.trim()) return;
 
-    // Add user message to chat
-    setChat([...chat, { role: "user", content: message }]);
+    // Add user message
+    setChat((prev) => [...prev, { role: "user", content: message }]);
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/chat", {
-        message,
-      });
+      const res = await axios.post("http://127.0.0.1:8000/chat", { message });
 
-      // Add bot reply to chat
-      setChat((prev) => [...prev, { role: "assistant", content: res.data.reply }]);
+      // Add bot reply
+      setChat((prev) => [
+        ...prev,
+        { role: "assistant", content: res.data.reply },
+      ]);
     } catch (err) {
       console.error(err);
-      setChat((prev) => [...prev, { role: "assistant", content: "Error: could not reach backend" }]);
+      setChat((prev) => [
+        ...prev,
+        { role: "assistant", content: "⚠️ Error: Backend not reachable." },
+      ]);
     }
 
-    setMessage(""); // clear input
+    setMessage("");
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", padding: "1rem" }}>
-      <h1>Customer Support Bot</h1>
+    <div className="min-h-screen flex flex-col items-center bg-gray-100 p-6">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">
+        💬 Customer Support Bot
+      </h1>
 
-      <div style={{ border: "1px solid #ccc", padding: "1rem", minHeight: "300px" }}>
+      {/* Chat Box */}
+      <div className="w-full max-w-2xl flex flex-col bg-white rounded-2xl shadow-lg p-4 h-[500px] overflow-y-auto">
         {chat.map((msg, i) => (
-          <p key={i} style={{ textAlign: msg.role === "user" ? "right" : "left" }}>
-            <b>{msg.role}:</b> {msg.content}
-          </p>
+          <div
+            key={i}
+            className={`flex mb-3 ${
+              msg.role === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`px-4 py-2 rounded-xl max-w-xs break-words ${
+                msg.role === "user"
+                  ? "bg-blue-500 text-white rounded-br-none"
+                  : "bg-gray-200 text-gray-800 rounded-bl-none"
+              }`}
+            >
+              {msg.content}
+            </div>
+          </div>
         ))}
       </div>
 
-      <div style={{ marginTop: "1rem" }}>
+      {/* Input Section */}
+      <div className="w-full max-w-2xl mt-4 flex gap-2">
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          style={{ width: "80%", padding: "0.5rem" }}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          placeholder="Type your message..."
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <button onClick={sendMessage} style={{ padding: "0.5rem 1rem" }}>
+        <button
+          onClick={sendMessage}
+          className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-xl shadow hover:bg-blue-600 transition"
+        >
           Send
         </button>
       </div>

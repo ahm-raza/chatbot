@@ -151,3 +151,16 @@ clear out client/src folder and make ready App.jsx with code:
     export default App;
 }
 run cmd "npm run dev", also make sure that server is running in backend.
+
+
+HOW TO UPLOAD FROM SCRATCH ON GITHUB:
+open terminal inside parent folder.
+git init
+git add .
+git commit -m "Initial commit - chatbot project"
+create new repo "chatbot"
+Don’t add README, license, or .gitignore (if you already have them locally).
+git remote add origin https://github.com/ahm-raza/chatbot.git
+git branch -M main
+git push -u origin main
+Done
